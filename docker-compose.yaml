@@ -1,0 +1,11 @@
+version: "3.5"
+services:
+  postgres:
+    image: postgres:10.5
+    container_name: potentate-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_DB=docker"
+      - "POSTGRES_USER=docker"
+      - "POSTGRES_PASSWORD=docker"
