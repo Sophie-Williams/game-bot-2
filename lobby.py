@@ -119,7 +119,7 @@ def start_game(bot: Bot, update: Update):
 
         lobby.is_open = False
         lobby.save()
-        update.effective_message.reply_text("Игра началась!")
+        update.effective_message.reply_text("Игра началась!", quote=False)
     except ValueError:
         return update.effective_message.reply_text(LOBBY_NOT_CREATED_MESSAGE)
     

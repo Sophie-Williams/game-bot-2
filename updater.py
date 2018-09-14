@@ -2,11 +2,12 @@
 import logging
 from decouple import Config, RepositoryEnv
 from telegram.ext import Updater
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, ConversationHandler
 from telegram import Bot, Update
 
 import models
 import lobby
+import game
 from models import database
 
 
@@ -54,9 +55,19 @@ dispatcher.add_handler(CommandHandler('join_lobby', lobby.join_lobby))
 dispatcher.add_handler(CommandHandler('leave_lobby', lobby.leave_lobby))
 dispatcher.add_handler(CommandHandler('members_lobby', lobby.members_lobby))
 dispatcher.add_handler(CommandHandler('start_game', lobby.start_game))
+dispatcher.add_handler(CommandHandler('roll', game.roll, pass_args=True))
+
+# dispatcher.add_handler(ConversationHandler(
+#     entry_points=[CommandHandler('roll', game.roll)]
+#     states={
+#         game.MOVE_ENTER:[CommandHandler('roll')]
+#     }
+# ))
 
 
 if __name__ == '__main__':
-    database.create_tables([models.Lobby, models.LobbyMember, models.Player, models.Card, models.PlayerCards])
+    database.create_tables([
+        models.Lobby, models.LobbyMember, models.Player, models.Card, models.PlayerCards,
+        models.GameState])
     updater.start_polling()
     updater.idle()

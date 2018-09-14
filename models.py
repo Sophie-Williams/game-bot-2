@@ -35,7 +35,7 @@ class LobbyMember(BaseModel):
 
 class Player(BaseModel):
     lobby = ForeignKeyField(Lobby, backref='players')
-    lobby_member = ForeignKeyField(LobbyMember)
+    lobby_member = ForeignKeyField(LobbyMember, backref='player')
     name = CharField()
     health = IntegerField(default=10)
     stars = IntegerField(default=0)
@@ -51,3 +51,17 @@ class Card(BaseModel):
 class PlayerCards(BaseModel):
     player = ForeignKeyField(Player, backref='cards')
     active_cards = ForeignKeyField(Card, backref='cards')
+
+
+class GameState(BaseModel):
+    lobby = ForeignKeyField(Lobby, backref='game')
+    player = ForeignKeyField(Player, backref='moves')
+
+    move_type = CharField() # roll, reward, buy, die
+    dices = CharField()
+    roll_dice_number = IntegerField(default=1)
+
+    # It this the start or the end of the players move
+    is_start = BooleanField(default=False)
+    is_end = BooleanField(default=False)
+
