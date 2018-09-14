@@ -5,10 +5,10 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram import Bot, Update
 
+import models
+import lobby
 from models import database
-from models import Lobby, LobbyMember
 
-from lobby import create_lobby, force_create_lobby, join_lobby, leave_lobby, members_lobby
 
 config = Config(RepositoryEnv('config.env'))
 updater = Updater(token=config('TOKEN'))
@@ -24,7 +24,8 @@ def start(bot: Bot, update: Update):
     update.effective_message.reply_text(
         'Добро пожаловать в царство "Властелина Казани". Это карточная игра, предназначенная '
         'для небольшой компании, в которой каждый найдет толику забавы и не останется разочарован. '
-        'Игра находится на стадии разработки. Чтобы начать игру, нажмите /create_lobby.')
+        'Игра находится на стадии разработки. Чтобы начать игру, нажмите /create_lobby.',
+        quote=False)
 
 
 def help(bot: Bot, update: Update):
@@ -33,7 +34,8 @@ def help(bot: Bot, update: Update):
         "/force_create_lobby - закрыть старую комнату и создать новую\n"
         "/join_lobby - присоединиться к комнате\n"
         "/leave_lobby - выйти из комнаты\n" 
-        "/members_lobby - список участников"
+        "/members_lobby - список участников",
+        quote=False
     )
 
 
@@ -46,14 +48,15 @@ def error(bot: Bot, update: Update, error):
 dispatcher.add_error_handler(error)
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('help', help))
-dispatcher.add_handler(CommandHandler('create_lobby', create_lobby))
-dispatcher.add_handler(CommandHandler('force_create_lobby', force_create_lobby))
-dispatcher.add_handler(CommandHandler('join_lobby', join_lobby))
-dispatcher.add_handler(CommandHandler('leave_lobby', leave_lobby))
-dispatcher.add_handler(CommandHandler('members_lobby', members_lobby))
+dispatcher.add_handler(CommandHandler('create_lobby', lobby.create_lobby))
+dispatcher.add_handler(CommandHandler('force_create_lobby', lobby.force_create_lobby))
+dispatcher.add_handler(CommandHandler('join_lobby', lobby.join_lobby))
+dispatcher.add_handler(CommandHandler('leave_lobby', lobby.leave_lobby))
+dispatcher.add_handler(CommandHandler('members_lobby', lobby.members_lobby))
+dispatcher.add_handler(CommandHandler('start_game', lobby.start_game))
 
 
 if __name__ == '__main__':
-    database.create_tables([Lobby, LobbyMember])
+    database.create_tables([models.Lobby, models.LobbyMember, models.Player, models.Card, models.PlayerCards])
     updater.start_polling()
     updater.idle()
