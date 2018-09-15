@@ -59,7 +59,6 @@ class GameState(BaseModel):
 
     move_type = CharField() # roll, reward, buy, die
     dices = CharField()
-    roll_dice_number = IntegerField(default=1)
 
     # It this the start or the end of the players move
     is_start = BooleanField(default=False)
