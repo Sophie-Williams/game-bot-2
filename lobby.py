@@ -9,8 +9,15 @@ from models import database
 from models import Lobby, LobbyMember, Player
 import utils
 
-MONSTER_NAMES = ['Гигазавр', 'Кибер Киса', 'Космо Пингвин', 'Кинг']
+MONSTER_NAMES = ['Гигазавр', 'Кибер Киса', 'Космо Пингвин', 'Кинг', 'Чужоид' 'Капитан Фиш']
 LOBBY_NOT_CREATED_MESSAGE = "Для начала создайте комнату, нажмите /create_lobby."
+
+
+def _db_create_lobby(update: Update, reply_text: str, quote=False):
+    utils.lobby_create(chat_id=update.effective_chat.id,
+                       author_id=update.effective_user.id,
+                       author_username=update.effective_user.username)
+    update.effective_message.reply_text(reply_text, quote=quote)
 
 
 @database.atomic()
@@ -19,19 +26,16 @@ def create_lobby(bot: Bot, update: Update):
         return update.effective_message.reply_text(
             "В этом чате уже создана комната, где все еще идет игра. Дождитесь, "
             "пока эта игра завершится, либо создайте новую /force_create_lobby.", quote=False)
-    else:
-        db_create_lobby(update,
-                        "Комната создана. Чтобы присоединиться, нажмите /join_lobby.")
+
+    _db_create_lobby(update, "Комната создана. Чтобы присоединиться, нажмите /join_lobby.")
 
 
 @database.atomic()
 def force_create_lobby(bot: Bot, update: Update):
     utils.lobby_lock(update.effective_chat.id)
-    update.effective_message.reply_text(
-        "Предыдущая игра остановлена, комната закрыта.", quote=False)
+    update.effective_message.reply_text("Предыдущая игра остановлена, комната закрыта.", quote=False)
 
-    db_create_lobby(update,
-                    "Создана новая комната. Чтобы присоединиться, нажмите /join_lobby.")
+    _db_create_lobby(update, "Создана новая комната. Чтобы присоединиться, нажмите /join_lobby.")
 
 
 @database.atomic()
@@ -41,14 +45,12 @@ def join_lobby(bot: Bot, update: Update):
         if not lobby.is_open:
             return update.effective_message.reply_text(
                 "Больше в текущую комнату присоединиться нельзя.")
-
         LobbyMember.create(
             user=update.effective_user.id,
             username=update.effective_user.username,
             lobby=lobby.id)
         update.effective_message.reply_text(
             f"@{update.effective_user.username} вошел в комнату.", quote=False)
-
     except IntegrityError:
         update.effective_message.reply_text("Вы уже вошли в эту комнату.")
     except ValueError:
@@ -137,10 +139,3 @@ def init(bot: Bot, update: Update, chat_data: dict):
         "queue": [it.id for it in players]
     })
     update.effective_message.reply_text("Данные инициированы")
-
-
-def db_create_lobby(update: Update, reply_text: str, quote=False):
-    utils.lobby_create(chat_id=update.effective_chat.id,
-                       author_id=update.effective_user.id,
-                       author_username=update.effective_user.username)
-    update.effective_message.reply_text(reply_text, quote=quote)
