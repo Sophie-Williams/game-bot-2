@@ -31,11 +31,20 @@ def start(bot: Bot, update: Update):
 
 def help(bot: Bot, update: Update):
     update.effective_message.reply_text(
+        "Взаимодействие с ботом:\n"
+        "/start - приветствие\n"
+        "/help - вывести эту справку\n\n"
+        "Взаимодействие с комнатой:\n"
         "/create_lobby - создать комнату\n"
         "/force_create_lobby - закрыть старую комнату и создать новую\n"
         "/join_lobby - присоединиться к комнате\n"
         "/leave_lobby - выйти из комнаты\n" 
-        "/members_lobby - список участников",
+        "/members_lobby - список участников\n\n"
+        "Взаимодействие с игрой:\n"
+        "/start_game - начать игру\n"
+        "/roll 1 2 3 - бросить кубики [позиции для перебрасывания]\n\n"
+        "Для дебаггинга:\n"
+        "/init - Инициализировать данные в комнате",
         quote=False
     )
 

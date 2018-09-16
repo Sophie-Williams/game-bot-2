@@ -31,7 +31,8 @@ def roll(bot: Bot, update: Update, args: list, chat_data: dict):
         return update.effective_message.reply_text(np.random.choice(phrases, p=weights))
 
     if player.lobby_member.user != update.effective_user.id:
-        return update.effective_message.reply_text(f"Сейчас ход не ваш. Ходит @{chat_data['current_player_username']}")
+        return update.effective_message.reply_text(
+            f"Сейчас ход не ваш. Ходит @{chat_data['current_player_username']}", quote=False)
     if chat_data["left_dice_rolls"] == 0:
         chat_data["left_dice_rolls"] = 3
         utils.update_player_queue(chat_data)
