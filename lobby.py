@@ -9,7 +9,7 @@ from models import database
 from models import Lobby, LobbyMember, Player
 import utils
 
-MONSTER_NAMES = ['Гигазавр', 'Кибер Киса', 'Космо Пингвин', 'Кинг', 'Чужоид' 'Капитан Фиш']
+MONSTER_NAMES = ['Гигазавр', 'Кибер Киса', 'Космо Пингвин', 'Кинг', 'Чужоид', 'Капитан Фиш']
 LOBBY_NOT_CREATED_MESSAGE = "Для начала создайте комнату, нажмите /create_lobby."
 
 
@@ -109,11 +109,13 @@ def start_game(bot: Bot, update: Update, chat_data: dict):
     lobby.is_open = False
     lobby.save()
 
+    # set chat data
     chat_data["rolled_dices"] = False
     chat_data["rewarded"] = False
     chat_data["shopped"] = False
     chat_data["left_dice_rolls"] = 3
     chat_data["num_dices"] = 6
+    chat_data["tokio"] = []
 
     # define queue
     ids = [member.id for member in lobby.members]
@@ -121,7 +123,10 @@ def start_game(bot: Bot, update: Update, chat_data: dict):
     chat_data["queue"] = deque([item.id for item in Player.select().where(Player.lobby_member.in_(ids))])
     utils.update_player_queue(chat_data)
 
+    player = Player.get_by_id(chat_data['current_player_id'])
     update.effective_message.reply_text("Игра началась!", quote=False)
+    update.effective_message.reply_text(
+        f"Первым ходит {player.name} (@{player.lobby_member.username}). Нажмите /roll.", quote=False)
 
 
 def init(bot: Bot, update: Update, chat_data: dict):

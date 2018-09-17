@@ -28,6 +28,7 @@ class LobbyMember(BaseModel):
         indexes = (
             (('user', 'lobby'), True),
         )
+        
     user = IntegerField()
     username = CharField(null=True)
     lobby = ForeignKeyField(Lobby, backref='members')
@@ -36,7 +37,7 @@ class LobbyMember(BaseModel):
 class Player(BaseModel):
     lobby = ForeignKeyField(Lobby, backref='players')
     lobby_member = ForeignKeyField(LobbyMember, backref='player')
-    name = CharField()
+    name = CharField(null=True)
     health = IntegerField(default=10)
     stars = IntegerField(default=0)
     energy = IntegerField(default=0)
@@ -59,8 +60,4 @@ class GameState(BaseModel):
 
     move_type = CharField() # roll, reward, buy, die
     dices = CharField()
-
-    # It this the start or the end of the players move
-    is_start = BooleanField(default=False)
-    is_end = BooleanField(default=False)
 

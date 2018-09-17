@@ -11,7 +11,7 @@ ROLL, MOVE_ROLL = range(2)
 def roll(bot: Bot, update: Update, args: list, chat_data: dict):
     try:
         lobby = utils.get_current_lobby(update)
-        player = utils.get_current_player_by_id(chat_data["current_player_id"])
+        player = utils.get_player_by_id(chat_data["current_player_id"])
     except ValueError:
         return update.effective_message.reply_text("Игра еще не начата.", quote=False)
     except KeyError:
@@ -51,7 +51,7 @@ def roll(bot: Bot, update: Update, args: list, chat_data: dict):
     GameState.create(lobby=lobby.id, player=player.id, move_type='roll', 
         dices=','.join(map(str, dices)))
     update.effective_message.reply_text(
-        f"{player.name} (@{player.lobby_member.username}) выбросил {dices}", quote=False)
+        f"{player.name} (@{player.lobby_member.username}) выбросил {utils.change_symbols(dices)}", quote=False)
 
     chat_data["left_dice_rolls"] -= 1
     chat_data["rolled_dices"] = True
@@ -59,7 +59,6 @@ def roll(bot: Bot, update: Update, args: list, chat_data: dict):
 
 def draw(bot: Bot, update: Update, chat_data: dict):
     pass
-
-
+    
 def shop(bot: Bot, update: Update, chat_data: dict):
     pass
