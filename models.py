@@ -60,4 +60,3 @@ class GameState(BaseModel):
 
     move_type = CharField() # roll, reward, buy, die
     dices = CharField()
-

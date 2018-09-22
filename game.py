@@ -56,9 +56,14 @@ def roll(bot: Bot, update: Update, args: list, chat_data: dict):
     chat_data["left_dice_rolls"] -= 1
     chat_data["rolled_dices"] = True
 
+    if chat_data["left_dice_rolls"] == 0:
+        update.effective_message.reply_text("Больше не осталось бросков. Разыграйте результат /draw.", quote=False)
+
 
 def draw(bot: Bot, update: Update, chat_data: dict):
-    pass
+    # lobby = utils.get_current_lobby(update)
+    # gs = utils.get_last_move(lobby)
+    update.effective_message.reply_text("Метод на рестоврации. Идите нахуй.")
     
 def shop(bot: Bot, update: Update, chat_data: dict):
     pass

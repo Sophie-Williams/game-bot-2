@@ -7,7 +7,7 @@ from models import Lobby, GameState, LobbyMember, Player
 # Game Interactions
 # -----------------
 
-DICE_SYMBOLS = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "💥", 5: "⚡️", 6: "❤️"} # ⭐️
+DICE_SYMBOLS = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "⚔️", 5: "⚡️", 6: "❤️"} # ⭐️
 
 
 def roll(previous=None, positions=None, num_dices=6) -> np.array:
@@ -43,11 +43,11 @@ def update_player_queue(chat_data: dict):
 
 def get_hit_targets(chat_data, player_id, lobby):
     if player_id in chat_data["tokio"]: 
-        return Player.select().where(
+        return list(Player.select(Player.id).where(
             (Player.lobby_member.in_(lobby.members)) &
-            (Player.id.not_in(chat_data["tokio"])))
+            (Player.id.not_in(chat_data["tokio"]))))
     else:
-        return Player.select().where(Player.id.in_(chat_data["tokio"]))
+        return list(Player.select(Player.id).where(Player.id.in_(chat_data["tokio"])))
 
 
 def change_symbols(arr):
